@@ -24,9 +24,13 @@ func New(options ...Option) ILogger {
 
 	log.SetOutput(os.Stdout)
 
-	log.SetFormatter(&logrus.JSONFormatter{
-		TimestampFormat: time.RFC3339,
-	})
+	if config.JSON {
+		log.SetFormatter(&logrus.JSONFormatter{
+			TimestampFormat: time.RFC3339,
+		})
+	} else {
+		log.SetFormatter(&TerminalFormatter{})
+	}
 
 	setLogLevel(log, config.Level)
 
