@@ -1,10 +1,12 @@
 package logxgo
 
 import (
+	"io"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,7 +16,9 @@ type Logger struct {
 }
 
 func New(options ...Option) ILogger {
-	config := Config{}
+	config := Config{
+		FileLogging: true,
+	}
 
 	for _, option := range options {
 		option(&config)
@@ -30,6 +34,27 @@ func New(options ...Option) ILogger {
 		})
 	} else {
 		log.SetFormatter(&TerminalFormatter{})
+	}
+
+	if config.FileLogging {
+		_ = os.MkdirAll("./var/log", 0755)
+
+		pathMap := lfshook.PathMap{
+			logrus.InfoLevel:  "./var/log/info_access.log",
+			logrus.ErrorLevel: "./var/log/error_access.log",
+			logrus.DebugLevel: "./var/log/debug_access.log",
+			logrus.WarnLevel:  "./var/log/warning_access.log",
+			logrus.FatalLevel: "./var/log/fatal_access.log",
+			logrus.PanicLevel: "./var/log/panic_access.log",
+			logrus.TraceLevel: "./var/log/trace_access.log",
+		}
+
+		log.Hooks.Add(lfshook.NewHook(
+			pathMap,
+			&logrus.JSONFormatter{
+				TimestampFormat: time.RFC3339,
+			},
+		))
 	}
 
 	setLogLevel(log, config.Level)

@@ -19,3 +19,9 @@ func WithJSON() Option {
 		config.JSON = true
 	}
 }
+
+func WithoutFileLogging() Option {
+	return func(config *Config) {
+		config.FileLogging = false
+	}
+}

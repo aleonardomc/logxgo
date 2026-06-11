@@ -1,7 +1,8 @@
 package logxgo
 
 type Config struct {
-	Level  string
-	Module string
-	JSON   bool
+	Level       string
+	Module      string
+	JSON        bool
+	FileLogging bool
 }
