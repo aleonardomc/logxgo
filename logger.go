@@ -1,7 +1,6 @@
 package logxgo
 
 import (
-	"io"
 	"os"
 	"strings"
 	"time"
